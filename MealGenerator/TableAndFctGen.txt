@@ -1,0 +1,533 @@
+Option Explicit
+Sub createWorkTable()
+Dim answer As Integer
+Dim answer2 As Integer: answer2 = 0
+Dim answer3 As Integer
+Dim message As String
+Dim message2 As String
+
+message = "Ce tip de optiune preferi?" & vbCrLf & "1.Intreg anul" & vbCrLf & "2.Jumatate de an-primul semestru" & vbCrLf & "3.Jumatate de an-al doilea semestru" & vbCrLf & "4.Quarter la alegere"
+message2 = "1.IAN-MAR" & vbCrLf & "2.APR-IUN" & vbCrLf & "3.IUL-SEP" & vbCrLf & "4.OCT-DEC"
+
+answer = InputBox(message, "Calculator bonuri", "1/2/3/4")
+Do While answer <> 1 And answer <> 2 And answer <> 3 And answer <> 4
+    MsgBox "Introdu o optiune valida"
+    answer = InputBox(message, "Calculator bonuri", "1/2/3/4")
+Loop
+
+Select Case answer
+    Case 1
+        Call createTable(answer, answer2)
+    Case 2
+        Call createTable(answer, answer2)
+    Case 3
+        Call createTable(answer, answer2)
+    Case 4
+        answer2 = InputBox(message2, "QUARTER", "1/2/3/4")
+        Do While answer2 <> 1 And answer2 <> 2 And answer2 <> 3 And answer2 <> 4
+            MsgBox "Introdu o optiune valida"
+            answer2 = InputBox(message2, "QUARTER", "1/2/3/4")
+        Loop
+        
+        If answer2 = 1 Then
+             Call createTable(answer, 1)
+        ElseIf answer2 = 2 Then
+            Call createTable(answer, 2)
+        ElseIf answer2 = 3 Then
+            Call createTable(answer, 3)
+        Else
+            Call createTable(answer, 4)
+        End If
+End Select
+Call createFinalStyles
+Columns.EntireColumn.AutoFit
+range("A1").Select
+Exit Sub
+End Sub
+
+
+Sub createBlocks(month As String, cellName As String)
+Dim finalCell As String
+Dim idx As Integer
+'IT IS NOT 31 CAUSE WE START FROM 1 1->31 THERE WILL BE 30 VALUES
+
+Select Case month
+    Case "IAN"
+        'Ianuare are 31 de zile
+        range(cellName, range(cellName).Offset(0, 30)).Select
+        Call styleMonth(31)
+    Case "FEB"
+        'Februarie are 28 de zile
+        range(cellName, range(cellName).Offset(0, 27)).Select
+        Call styleMonth(28)
+        'complete till 31 with black cells
+        range(cellName).Offset(0, 27).Select
+        Selection.Offset(0, 1).Select
+        For idx = 1 To 3
+            Selection.Interior.Color = RGB(0, 0, 0)
+            Selection.Offset(0, 1).Select
+        Next idx
+    Case "MAR"
+        'Martie are 31 de zile
+        range(cellName, range(cellName).Offset(0, 30)).Select
+        Call styleMonth(30)
+    Case "APR"
+        'Aprilie are 30 de zile
+        range(cellName, range(cellName).Offset(0, 29)).Select
+        Call styleMonth(29)
+        range(cellName).Offset(0, 29).Select
+        Selection.Offset(0, 1).Select
+        Selection.Interior.Color = RGB(0, 0, 0)
+     Case "MAI"
+        'MAI are 31 de zile
+        range(cellName, range(cellName).Offset(0, 30)).Select
+        Call styleMonth(30)
+    Case "IUN"
+        'Iunie are 30 de zile
+        range(cellName, range(cellName).Offset(0, 29)).Select
+        Call styleMonth(29)
+        range(cellName).Offset(0, 29).Select
+        Selection.Offset(0, 1).Select
+        Selection.Interior.Color = RGB(0, 0, 0)
+     Case "IUL"
+        'iULIE are 31 de zile
+        range(cellName, range(cellName).Offset(0, 30)).Select
+        Call styleMonth(30)
+    Case "AUG"
+        'August are 31 de zile
+        range(cellName, range(cellName).Offset(0, 30)).Select
+        Call styleMonth(30)
+    Case "SEP"
+        'Septembrie are 30 de zile
+        range(cellName, range(cellName).Offset(0, 29)).Select
+        Call styleMonth(29)
+        range(cellName).Offset(0, 29).Select
+        Selection.Offset(0, 1).Select
+        Selection.Interior.Color = RGB(0, 0, 0)
+    Case "OCT"
+        'Octombrie are 31 de zile
+        range(cellName, range(cellName).Offset(0, 30)).Select
+        Call styleMonth(30)
+    Case "NOV"
+        'Noiembrie are 30 de zile
+        range(cellName, range(cellName).Offset(0, 29)).Select
+        Call styleMonth(29)
+        range(cellName).Offset(0, 29).Select
+        Selection.Offset(0, 1).Select
+        Selection.Interior.Color = RGB(0, 0, 0)
+    Case "DEC"
+        'Decembrie are 31 de zile
+        range(cellName, range(cellName).Offset(0, 30)).Select
+        Call styleMonth(30)
+    Case Else
+        'default o sa fie 31 de zile in caz de vreo eroare
+        range(cellName, range(cellName).Offset(0, 31)).Select
+        Call styleMonth(31)
+End Select
+        
+    
+        
+        
+        
+        
+    
+
+
+End Sub
+
+Sub styleMonth(numberOfDays As Integer)
+
+With Selection.Font
+    .Size = 12
+    .name = "Comic Sans"
+    .Bold = True
+End With
+
+'make borders
+Selection.HorizontalAlignment = xlCenter
+Selection.Borders(xlEdgeTop).LineStyle = xlContinuous
+Selection.Borders(xlEdgeBottom).LineStyle = xlContinuous
+Selection.Borders(xlEdgeRight).LineStyle = xlContinuous
+Selection.Borders(xlEdgeLeft).LineStyle = xlContinuous
+Selection.Borders(xlEdgeTop).Weight = xlThin
+Selection.Borders(xlEdgeBottom).Weight = xlThin
+Selection.Borders(xlEdgeRight).Weight = xlThick
+Selection.Borders(xlEdgeLeft).Weight = xlThick
+
+End Sub
+
+
+Sub createTable(inputAnswer1, inputAnswer2 As Integer)
+Dim addressStart As String
+Dim addressEnd As String
+
+range("B4").value = "LUNA"
+range("B4").Select
+Selection.Font.name = "Arial Black"
+Selection.Font.Bold = True
+Selection.Font.Size = 14
+Selection.Font.Color = RGB(0, 0, 255)
+Selection.Interior.Color = RGB(206, 266, 29)
+Selection.HorizontalAlignment = xlCenter
+Selection.Borders(xlEdgeTop).LineStyle = xlContinuous
+Selection.Borders(xlEdgeBottom).LineStyle = xlContinuous
+Selection.Borders(xlEdgeRight).LineStyle = xlContinuous
+Selection.Borders(xlEdgeLeft).LineStyle = xlContinuous
+Selection.Borders(xlEdgeTop).Weight = xlThick
+Selection.Borders(xlEdgeBottom).Weight = xlThick
+Selection.Borders(xlEdgeRight).Weight = xlThick
+Selection.Borders(xlEdgeLeft).Weight = xlThick
+
+addressStart = Selection.Offset(0, 1).address
+addressEnd = Selection.Offset(0, 31).address ' from the last selection we will count 32 columns
+
+range(addressStart & ":" & addressEnd).Merge False
+range(addressStart).Select
+Selection.value = "ZIUA"
+Selection.Font.name = "Arial Black"
+Selection.Font.Bold = True
+Selection.Font.Size = 14
+Selection.Font.Color = RGB(0, 0, 255)
+Selection.Interior.Color = RGB(206, 266, 29)
+Selection.HorizontalAlignment = xlCenter
+Selection.Borders(xlEdgeTop).LineStyle = xlContinuous
+Selection.Borders(xlEdgeBottom).LineStyle = xlContinuous
+Selection.Borders(xlEdgeRight).LineStyle = xlContinuous
+Selection.Borders(xlEdgeLeft).LineStyle = xlContinuous
+Selection.Borders(xlEdgeTop).Weight = xlThick
+Selection.Borders(xlEdgeBottom).Weight = xlThick
+Selection.Borders(xlEdgeRight).Weight = xlThick
+Selection.Borders(xlEdgeLeft).Weight = xlThick
+
+Selection.Offset(0, 1).Select
+Selection.value = "TOTAL"
+Selection.Font.name = "Arial Black"
+Selection.Font.Bold = True
+Selection.Font.Size = 14
+Selection.Font.Color = RGB(0, 0, 255)
+Selection.Interior.Color = RGB(206, 266, 29)
+Selection.HorizontalAlignment = xlCenter
+Selection.Borders(xlEdgeTop).LineStyle = xlContinuous
+Selection.Borders(xlEdgeBottom).LineStyle = xlContinuous
+Selection.Borders(xlEdgeRight).LineStyle = xlContinuous
+Selection.Borders(xlEdgeLeft).LineStyle = xlContinuous
+Selection.Borders(xlEdgeTop).Weight = xlThick
+Selection.Borders(xlEdgeBottom).Weight = xlThick
+Selection.Borders(xlEdgeRight).Weight = xlThick
+Selection.Borders(xlEdgeLeft).Weight = xlThick
+
+Call createDates
+
+If inputAnswer1 = 1 Then
+    ' need to create 12 lines
+    'IANUARIE
+    range("B5").Offset(1, 0).Select
+    Selection.value = "IAN"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("IAN", Selection.Offset(0, 1).address)
+    'FEBRUARIE
+    range("B5").Offset(2, 0).Select
+    Selection.value = "FEB"
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("FEB", Selection.Offset(0, 1).address)
+    'MARTIE
+    range("B5").Offset(3, 0).Select
+    Selection.value = "MAR"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("MAR", Selection.Offset(0, 1).address)
+    'APRILIE
+    range("B5").Offset(4, 0).Select
+    Selection.value = "APR"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("APR", Selection.Offset(0, 1).address)
+    'MAI
+    range("B5").Offset(5, 0).Select
+    Selection.value = "MAI"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("MAI", Selection.Offset(0, 1).address)
+     'IUN
+    range("B5").Offset(6, 0).Select
+    Selection.value = "IUN"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("IUN", Selection.Offset(0, 1).address)
+      'IUL
+    range("B5").Offset(7, 0).Select
+    Selection.value = "IUL"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("IUL", Selection.Offset(0, 1).address)
+     'AUG
+    range("B5").Offset(8, 0).Select
+    Selection.value = "AUG"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("AUG", Selection.Offset(0, 1).address)
+    'SEP
+    range("B5").Offset(9, 0).Select
+    Selection.value = "SEP"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("SEP", Selection.Offset(0, 1).address)
+    'OCT
+    range("B5").Offset(10, 0).Select
+    Selection.value = "OCT"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("OCT", Selection.Offset(0, 1).address)
+    'NOV
+    range("B5").Offset(11, 0).Select
+    Selection.value = "NOV"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("NOV", Selection.Offset(0, 1).address)
+     'DEC
+    range("B5").Offset(12, 0).Select
+    Selection.value = "DEC"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("DEC", Selection.Offset(0, 1).address)
+ElseIf inputAnswer1 = 2 Then
+    ' need to create 6 lines
+    'IANUARIE
+    range("B5").Offset(1, 0).Select
+    Selection.value = "IAN"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("IAN", Selection.Offset(0, 1).address)
+    'FEBRUARIE
+    range("B5").Offset(2, 0).Select
+    Selection.value = "FEB"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("FEB", Selection.Offset(0, 1).address)
+    'MARTIE
+    range("B5").Offset(3, 0).Select
+    Selection.value = "MAR"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("MAR", Selection.Offset(0, 1).address)
+    'APRILIE
+    range("B5").Offset(4, 0).Select
+    Selection.value = "APR"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("APR", Selection.Offset(0, 1).address)
+    'MAI
+    range("B5").Offset(5, 0).Select
+    Selection.value = "MAI"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("MAI", Selection.Offset(0, 1).address)
+     'IUN
+    range("B5").Offset(6, 0).Select
+    Selection.value = "IUN"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("IUN", Selection.Offset(0, 1).address)
+ElseIf inputAnswer1 = 3 Then
+    'need to create 6 lines
+      'IUL
+    range("B5").Offset(1, 0).Select
+    Selection.value = "IUL"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("IUL", Selection.Offset(0, 1).address)
+     'AUG
+    range("B5").Offset(2, 0).Select
+    Selection.value = "AUG"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("AUG", Selection.Offset(0, 1).address)
+    'SEP
+    range("B5").Offset(3, 0).Select
+    Selection.value = "SEP"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("SEP", Selection.Offset(0, 1).address)
+    'OCT
+    range("B5").Offset(4, 0).Select
+    Selection.value = "OCT"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("OCT", Selection.Offset(0, 1).address)
+    'NOV
+    range("B5").Offset(5, 0).Select
+    Selection.value = "NOV"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("NOV", Selection.Offset(0, 1).address)
+     'DEC
+    range("B5").Offset(6, 0).Select
+    Selection.value = "DEC"
+    Selection.Font.Bold = True
+    Selection.Font.Color = RGB(255, 0, 0)
+    Call createBlocks("DEC", Selection.Offset(0, 1).address)
+Else
+    If inputAnswer2 = 1 Then
+        '3 lines
+        'IANUARIE
+        range("B5").Offset(1, 0).Select
+        Selection.value = "IAN"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("IAN", Selection.Offset(0, 1).address)
+        'FEBRUARIE
+        range("B5").Offset(2, 0).Select
+        Selection.value = "FEB"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("FEB", Selection.Offset(0, 1).address)
+        'MARTIE
+        range("B5").Offset(3, 0).Select
+        Selection.value = "MAR"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+    ElseIf inputAnswer2 = 2 Then
+         'APRILIE
+        range("B5").Offset(1, 0).Select
+        Selection.value = "APR"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("APR", Selection.Offset(0, 1).address)
+        'MAI
+        range("B5").Offset(2, 0).Select
+        Selection.value = "MAI"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("MAI", Selection.Offset(0, 1).address)
+         'IUN
+        range("B5").Offset(3, 0).Select
+        Selection.value = "IUN"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("IUN", Selection.Offset(0, 1).address)
+    ElseIf inputAnswer2 = 3 Then
+          'IUL
+        range("B5").Offset(1, 0).Select
+        Selection.value = "IUL"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("IUL", Selection.Offset(0, 1).address)
+         'AUG
+        range("B5").Offset(2, 0).Select
+        Selection.value = "AUG"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("AUG", Selection.Offset(0, 1).address)
+        'SEP
+        range("B5").Offset(3, 0).Select
+        Selection.value = "SEP"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("SEP", Selection.Offset(0, 1).address)
+    Else
+        'OCT
+        range("B5").Offset(1, 0).Select
+        Selection.value = "OCT"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("OCT", Selection.Offset(0, 1).address)
+        'NOV
+        range("B5").Offset(2, 0).Select
+        Selection.value = "NOV"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("NOV", Selection.Offset(0, 1).address)
+         'DEC
+        range("B5").Offset(3, 0).Select
+        Selection.value = "DEC"
+        Selection.Font.Bold = True
+        Selection.Font.Color = RGB(255, 0, 0)
+        Call createBlocks("DEC", Selection.Offset(0, 1).address)
+        
+    End If
+End If
+End Sub
+
+Sub createDates()
+Dim idx As Integer
+
+range("C5").Select
+Selection.value = 1
+Selection.Font.Color = RGB(255, 0, 0)
+Selection.Font.Italic = True
+
+For idx = 1 To 30
+    Selection.Offset(0, 1).Select
+    Selection.value = idx + 1
+    Selection.Font.Color = RGB(255, 0, 0)
+    Selection.Font.Italic = True
+Next idx
+End Sub
+
+Sub createFinalStyles()
+Dim numberMonths As Integer
+range("B5").Select
+Selection.Interior.Color = RGB(228, 229, 228)
+Selection.Borders(xlEdgeRight).LineStyle = xlContinuous
+Selection.Borders(xlEdgeLeft).LineStyle = xlContinuous
+Selection.Borders(xlEdgeRight).Weight = xlThick
+Selection.Borders(xlEdgeLeft).Weight = xlThick
+
+'count down till end of of months
+range(Selection.Offset(1, 0), Selection.Offset(1, 0).End(xlDown)).Select
+Selection.Borders(xlEdgeRight).LineStyle = xlContinuous
+Selection.Borders(xlEdgeLeft).LineStyle = xlContinuous
+Selection.Borders(xlEdgeBottom).LineStyle = xlContinuous
+Selection.Borders(xlEdgeRight).Weight = xlThick
+Selection.Borders(xlEdgeLeft).Weight = xlThick
+Selection.Borders(xlEdgeBottom).Weight = xlThick
+
+numberMonths = Application.WorksheetFunction.CountA(Selection)
+'count till column ah which is the total column
+range("AH5").Select
+Selection.Interior.Color = RGB(228, 229, 228)
+Selection.Borders(xlEdgeRight).LineStyle = xlContinuous
+Selection.Borders(xlEdgeLeft).LineStyle = xlContinuous
+Selection.Borders(xlEdgeRight).Weight = xlThick
+Selection.Borders(xlEdgeLeft).Weight = xlThick
+
+range(Selection.Offset(1, 0), Selection.Offset(numberMonths, 0)).Select
+Selection.Borders(xlEdgeRight).LineStyle = xlContinuous
+Selection.Borders(xlEdgeLeft).LineStyle = xlContinuous
+Selection.Borders(xlEdgeBottom).LineStyle = xlContinuous
+Selection.Borders(xlEdgeRight).Weight = xlThick
+Selection.Borders(xlEdgeLeft).Weight = xlThick
+Selection.Borders(xlEdgeBottom).Weight = xlThick
+
+
+End Sub
+
+Sub calculateMoney()
+Dim numberOfCompletedRows
+Dim idx As Integer
+Dim startingRange As range
+
+Set startingRange = range("c5:ag5")
+'go to month column and see how many months there are
+range("b5").Select
+Selection.Offset(1, 0).Select
+range(Selection, Selection.End(xlDown)).Select
+numberOfCompletedRows = Application.WorksheetFunction.CountA(Selection)
+'go to total column
+range("ah5").Select
+For idx = 1 To numberOfCompletedRows
+    Selection.Offset(idx, 0).value = WorksheetFunction.CountA(startingRange.Offset(idx, 0)) * 30
+Next idx
+
+
+
+
+
+End Sub
+    
+
+
+
+
+
